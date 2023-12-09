@@ -27,3 +27,7 @@ nb = pynetbox.api(
     f'{nb_url}',
     token=f'{nb_api_token}'
 )
+
+#response = nb.ipam.vlans.get()
+
+#print(response)
