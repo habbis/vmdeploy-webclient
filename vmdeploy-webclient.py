@@ -48,22 +48,22 @@ for i in records1:
 #       sys.exit()
 #    for r in records:
 #      print (r[0])
-
 c.execute("SELECT cluster_name FROM cluster")
 records2 = c.fetchall()
 #records2 = c.fetchone()
 if not records2:
   print("check your the cluster query")
   sys.exit()
-#for r in records2:
+for r in records2:
   #print (r[0])
-#  test2 = r[0]
+  #test2 = r[0]
+  print(r)
 test2 = records2[0]
-test3 = records2[1]
-test4 = records2[2]
+#test3 = records2[1]
+#test4 = records2[2]
 #print(test2)
 #print(test3)
-#print(test4)
+#print(test3)
 
 
 
