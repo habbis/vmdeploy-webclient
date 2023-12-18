@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-#import sys
 #import os
+import sys
+import re
+import array
+import unicodedata
 import MySQLdb as mysql
 import streamlit as st
 
@@ -15,6 +18,15 @@ mydb = mysql.connect(database=f"{db}", read_default_file=f"~/.my.cnf")
 
 
 c = mydb.cursor()
+
+
+def convertTuple(tup):
+   # initialize an empty string
+   str = ''
+   for item in tup:
+      str = str + item
+   return str
+
 
 
 
@@ -33,11 +45,21 @@ records1 = c.fetchall()
 if not records1:
   print("check your the virt host query")
   sys.exit()
-for i in records1:
-  #print (r[0])
-  test = i[0]
+pve_host_list = (list(records1))
+pve_host1 = (convertTuple(pve_host_list[0]))
+pve_host2 = (convertTuple(pve_host_list[1]))
+pve_host3 = (convertTuple(pve_host_list[2]))
+
+st.title("Deploy VM")
+
+option_pve_host =  st.selectbox("Select proxmox hosts",[f"{pve_host1}",f"{pve_host2}",f"{pve_host3}"])
 
 
+
+option_vlan = st.selectbox("Select Vlan",["test","prod"])
+
+
+option_domain =  st.selectbox("Select cluster",["no.habbfarm.net","habbfarm.net"])
 
 #def cluster_list_query():
 #    #SELECT cluster_name FROM cluster;
@@ -48,38 +70,28 @@ for i in records1:
 #       sys.exit()
 #    for r in records:
 #      print (r[0])
-c.execute("SELECT cluster_name FROM cluster")
-records2 = c.fetchall()
-#records2 = c.fetchone()
-if not records2:
-  print("check your the cluster query")
-  sys.exit()
-for r in records2:
-  #print (r[0])
-  #test2 = r[0]
-  print(r)
-test2 = records2[0]
-#test3 = records2[1]
-#test4 = records2[2]
-#print(test2)
-#print(test3)
-#print(test3)
+c.execute("""SELECT cluster_name FROM cluster WHERE virt_host = %s""",(option_pve_host,))
+#records2 = c.fetchall()
+records2 = c.fetchone()
+cluster = records2[0]
 
 
 
 
 
-#st.title("Deploy VM")
-
-#option_cluster =  st.selectbox("Select virt host",[f"{test2}",f"{test3}",f"{test4}"])
+#option_cluster =  st.selectbox("Select cluster",[f"{cluster1}",f"{cluster2}",f"{cluster3}"])
 
 
-#option_cluster 
+#option_cluster
+cluster
 
 
-#cluster_list()
-#virt_host_list()
+hostname = st.text_input("Server Hostname")
 
+
+fqdn = f"{hostname}.{option_domain}"
+
+fqdn
 
 
 
