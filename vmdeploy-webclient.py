@@ -71,28 +71,21 @@ option_domain =  st.selectbox("Select cluster",["no.habbfarm.net","habbfarm.net"
 #    for r in records:
 #      print (r[0])
 c.execute("""SELECT cluster_name FROM cluster WHERE virt_host = %s""",(option_pve_host,))
-#records2 = c.fetchall()
 records2 = c.fetchone()
 cluster = records2[0]
 
 
-
-
-
-#option_cluster =  st.selectbox("Select cluster",[f"{cluster1}",f"{cluster2}",f"{cluster3}"])
-
-
-#option_cluster
 cluster
 
-
 hostname = st.text_input("Server Hostname")
+if not hostname:
+   st.warning('Please input a hostname')
+   st.stop()
 
 
 fqdn = f"{hostname}.{option_domain}"
 
 fqdn
-
 
 
 
