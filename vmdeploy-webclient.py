@@ -87,6 +87,14 @@ fqdn = f"{hostname}.{option_domain}"
 
 fqdn
 
+clicked = st.button("deploy")
+
+if clicked:
+   m =  "VM is deploying"
+   m
+
+
+  
 
 
 try:
