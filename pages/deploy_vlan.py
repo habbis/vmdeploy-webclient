@@ -32,9 +32,7 @@ def check_vlanid(vlanid):
         return None
     vlanid = result_vlanid[0]
 
-    if vlanid is None:
-        return None
-    else:
+    if vlanid:
         return vlanid
 
 
