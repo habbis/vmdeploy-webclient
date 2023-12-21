@@ -11,11 +11,6 @@ mydb = mysql.connect(database=f"{db}", read_default_file=f"~/.my.cnf")
 
 c = mydb.cursor()
 
-st.title("Deploy vlan")
-
-vlan_name = st.text_input("vlan name")
-st.warning('Please input a hostname')
-
 
 def check_vlan(vlan):
     c.execute("""SELECT vlan FROM vlan WHERE vlan = %s""", (vlan_name,))
@@ -30,11 +25,36 @@ def check_vlan(vlan):
         return vlan
 
 
-v = check_vlan(vlan_name)
+def check_vlanid(vlanid):
+    c.execute("""SELECT vlan FROM vlan WHERE vlanid = %s""", (vlan_id,))
+    result_vlanid = c.fetchone()
+    if result_vlanid is None:
+        return None
+    vlanid = result_vlanid[0]
 
-check_vlan(vlan_name)
-if v is not None:
+    if vlanid is None:
+        return None
+    else:
+        return vlanid
+
+
+st.title("Deploy vlan")
+
+vlan_name = st.text_input("vlan name")
+st.warning('Please input a hostname')
+
+if check_vlan(vlan_name) is not None:
     st.error("vlan exist")
+
+vlan_id = st.text_input("vlanid")
+st.warning('Please input a vlanid')
+
+if check_vlanid(vlan_id) is not None:
+    st.error("vlanid exist")
+
+vlan_prefix = st.text_input("vlan prefix like 192.168.1.0/24")
+st.warning('Please input prefix')
+
 
 # c.execute("""INSERT HOSTS cluster_name FROM cluster WHERE virt_host = %s""", (option_pve_host,))
 
