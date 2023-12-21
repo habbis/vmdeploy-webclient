@@ -77,8 +77,8 @@ def page1():
     elif not hostname and not is_valid_domain(fqdn):
         c.execute("""INSERT HOSTS cluster_name FROM cluster WHERE virt_host = %s""", (option_pve_host,))
 
-    #clicked = st.button("deploy")
-    #if clicked:
+    # clicked = st.button("deploy")
+    # if clicked:
     #    #m = "VM is deploying"
 
 
