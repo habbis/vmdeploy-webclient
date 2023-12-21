@@ -7,13 +7,9 @@ import unicodedata
 import MySQLdb as mysql
 import streamlit as st
 
-#file = '.my.cnf'
-
-#path = os.path.abspath(f'{file}')
 
 db = 'infra'
 
-#mydb = mysql.connect(database=f"{db}", read_default_file=f"{path}")
 mydb = mysql.connect(database=f"{db}", read_default_file=f"~/.my.cnf")
 
 
@@ -28,17 +24,27 @@ def convertTuple(tup):
    return str
 
 
+def isValidDomain(str):
+ 
+    # Regex to check valid
+    # domain name.
+    regex = "^((?!-)[A-Za-z0-9-]" + "{1,63}(?<!-)\\.)" +"+[A-Za-z]{2,6}"
+     
+    # Compile the ReGex
+    p = re.compile(regex)
+ 
+    # If the string is empty
+    # return false
+    if (str == None):
+        return False
+ 
+    # Return if the string
+    # matched the ReGex
+    if(re.search(p, str)):
+        return True
+    else:
+        return False
 
-
-#def virt_host_query():
-    #SELECT cluster_name FROM cluster;
-#    c.execute("SELECT virt_host FROM cluster")
-#    records = c.fetchall()
-#    if not records:
-#       print("check your the virt host query")
-#       sys.exit()
-#    for r in records:
-#      print (r[0])
 
 c.execute("SELECT virt_host FROM cluster")
 records1 = c.fetchall()
@@ -53,49 +59,29 @@ pve_host3 = (convertTuple(pve_host_list[2]))
 st.title("Deploy VM")
 
 option_pve_host =  st.selectbox("Select proxmox hosts",[f"{pve_host1}",f"{pve_host2}",f"{pve_host3}"])
-
-
-
 option_vlan = st.selectbox("Select Vlan",["test","prod"])
-
-
 option_domain =  st.selectbox("Select cluster",["no.habbfarm.net","habbfarm.net"])
 
-#def cluster_list_query():
-#    #SELECT cluster_name FROM cluster;
-#    c.execute("SELECT cluster_name FROM cluster")
-#    records = c.fetchall()
-#    if not records:
-#       print("check your the cluster query")
-#       sys.exit()
-#    for r in records:
-#      print (r[0])
 c.execute("""SELECT cluster_name FROM cluster WHERE virt_host = %s""",(option_pve_host,))
 records2 = c.fetchone()
+if not records1:
+  print("check your cluster query")
+  sys.exit()
 cluster = records2[0]
-
-
-cluster
 
 hostname = st.text_input("Server Hostname")
 if not hostname:
    st.warning('Please input a hostname')
-   st.stop()
-
 
 fqdn = f"{hostname}.{option_domain}"
 
-fqdn
+if not isValidDomain(fqdn):
+    st.error("Hostname is not valid")
 
 clicked = st.button("deploy")
 
 if clicked:
    m =  "VM is deploying"
-   m
-
-
-  
-
 
 try:
     commit = mydb.commit()
