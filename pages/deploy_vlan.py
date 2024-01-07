@@ -1,7 +1,3 @@
-import sys
-import re
-import array
-import unicodedata
 import MySQLdb as mysql
 import streamlit as st
 
@@ -13,7 +9,7 @@ c = mydb.cursor()
 
 
 def check_vlan(vlan):
-    c.execute("""SELECT vlan FROM vlan WHERE vlan = %s""", (vlan_name,))
+    c.execute("""SELECT vlan FROM vlan WHERE vlan = %s""", (vlan,))
     result_vlan = c.fetchone()
     if result_vlan is None:
         return None
@@ -26,35 +22,60 @@ def check_vlan(vlan):
 
 
 def check_vlanid(vlanid):
-    c.execute("""SELECT vlan FROM vlan WHERE vlanid = %s""", (vlan_id,))
+    c.execute("""SELECT vlan FROM vlan WHERE vlanid = %s""", (vlanid,))
     result_vlanid = c.fetchone()
     if result_vlanid is None:
         return None
     vlanid = result_vlanid[0]
 
-    if vlanid:
+    if vlanid is None:
+        return None
+    else:
         return vlanid
+
+
+def check_prefix(prefix):
+    c.execute("""SELECT prefix FROM vlan WHERE prefix = %s""", (prefix,))
+    result = c.fetchone()
+    if result is None:
+        return None
+    prefix = result[0]
+
+    if prefix is None:
+        return None
+    else:
+        return prefix
 
 
 st.title("Deploy vlan")
 
-vlan_name = st.text_input("vlan name")
-st.warning('Please input a hostname')
+with st.form("vlan form"):
+    vlan_name = st.text_input("vlan name")
+    st.warning('Please input a hostname')
 
-if check_vlan(vlan_name) is not None:
-    st.error("vlan exist")
+    vlan_id = st.text_input("vlanid")
+    st.warning('Please input a vlanid')
 
-vlan_id = st.text_input("vlanid")
-st.warning('Please input a vlanid')
+    vlan_prefix = st.text_input("vlan prefix like 192.168.1.0/24")
+    st.warning('Please input prefix')
 
-if check_vlanid(vlan_id) is not None:
-    st.error("vlanid exist")
+    state = st.text_input("vlan state if valid input new,present,absent")
+    st.warning('Please input prefix')
 
-vlan_prefix = st.text_input("vlan prefix like 192.168.1.0/24")
-st.warning('Please input prefix')
+    submitted = st.form_submit_button("Submit")
 
-
-# c.execute("""INSERT HOSTS cluster_name FROM cluster WHERE virt_host = %s""", (option_pve_host,))
+    if check_vlan(vlan_name) is not None:
+        st.error("vlan exist")
+        st.stop()
+    elif check_vlanid(vlan_id) is not None:
+        st.error("vlanid exist")
+        st.stop()
+    elif check_prefix(vlan_prefix) is not None:
+        st.error("prefix exist")
+        st.stop()
+    elif submitted:
+        c.execute("""INSERT INTO vlan (vlan,vlanid,prefix,state) VALUES (%s,%s,%s,%s)""",
+                  (vlan_name, vlan_id, vlan_prefix, state))
 
 try:
     commit = mydb.commit()

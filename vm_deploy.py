@@ -80,17 +80,14 @@ def page1():
     # clicked = st.button("deploy")
     # if clicked:
     #    #m = "VM is deploying"
-
-
 page1()
 
 try:
-    commit = mydb.commit()
+    commit = c.commit()
 except Exception as error:
     print("Trying to commit query somting happend", error)
 
 try:
     c.close()
-    mydb.close()
 except:
     print("Trying to close database connection somthing went wrong")
