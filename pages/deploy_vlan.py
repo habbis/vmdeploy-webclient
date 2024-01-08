@@ -64,6 +64,8 @@ with st.form("vlan form"):
 
     submitted = st.form_submit_button("Submit")
 
+
+
     if check_vlan(vlan_name) is not None:
         st.error("vlan exist")
         st.stop()

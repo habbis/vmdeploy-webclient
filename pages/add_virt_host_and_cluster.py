@@ -63,5 +63,5 @@ except Exception as error:
 
 try:
     c.close()
-except:
-    print("Trying to close database connection somthing went wrong")
+except  Exception as error:
+    print("Trying to close database connection somthing went wrong", error)
